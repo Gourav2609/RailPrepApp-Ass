@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, BackHandler, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
@@ -13,10 +13,39 @@ const LogoutScreen = () => {
     }
   };
 
+  const confirmLogout = () => {
+    Alert.alert("Confirm", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "Yes", onPress: handleLogout }
+    ]);
+  };
+
+  // const handleBackPress = () => {
+  //   confirmLogout();
+  //   return true;
+  // };
+
+  // const registerBackHandler = () => {
+  //   BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  // };
+
+  // const unregisterBackHandler = () => {
+  //   BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+  // };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Logout</Text>
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => {
+          confirmLogout();
+        }}
+      >
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
     </View>

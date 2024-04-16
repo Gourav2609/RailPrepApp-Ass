@@ -53,7 +53,7 @@ const LoginPage = () => {
         return response.json();
       })
       .then((data) => {
-        setLoading(false);
+        // setLoading(false);
         console.log("Login response:", data);
         if (data.success && data.token) {
           console.log("Login successful");
@@ -73,9 +73,9 @@ const LoginPage = () => {
         }
       })
       .catch((error) => {
-        setLoading(false);
+        // setLoading(false);
         console.log("Error:", error);
-        // Handle error (optional)
+       
       });
   };
 
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
     width: "100%",
     height: "100%",
   },

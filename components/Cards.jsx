@@ -7,7 +7,7 @@ const Card = ({data}) => {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{data.title}</Text>
-      <TouchableOpacity style={styles.readMoreButton} onPress={()=> router.push(`/home/${id}`)}>
+      <TouchableOpacity style={styles.readMoreButton} onPress={()=> router.replace(`/home/${id}`)}>
         <Text style={styles.readMoreButtonText}>Read More</Text>
       </TouchableOpacity>
     </View>

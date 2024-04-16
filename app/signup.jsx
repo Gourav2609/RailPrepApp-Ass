@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet , ToastAndroid } from 'react-native';
-import { router} from 'expo-router'; // Assuming you're using Expo Router
+import { View, Text, TextInput, TouchableOpacity, StyleSheet , ToastAndroid  , ActivityIndicator} from 'react-native';
+import { router} from 'expo-router'; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignUpPage = () => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const showToast = (e) => {
     ToastAndroid.show(e, ToastAndroid.SHORT);
   };
 
   const handleSignUp = () => {
+    setLoading(true);
     fetch("https://railprep.devshots.io/api/v1/auth/register", {
       method: "POST",
       headers: {
@@ -25,24 +28,38 @@ const SignUpPage = () => {
       }),
     })
       .then((response) => {
+        setLoading(false);
         console.log("Registration response:", response);
         return response.json();
       })
       .then((data) => {
+        // setLoading(false);
         console.log("Registration response:", data);
         if (data.success) {
           console.log("Registration successful");
           showToast("Registration successful");
-          router.push("/");
+          AsyncStorage.setItem("token", data.token)
+            .then(() => {
+              console.log("Token saved in local storage", data.token);
+              setEmail("");
+              setPassword("");
+              setUsername("");
+              setName("");
+              router.push("/home");
+            })
+            .catch((error) => {
+              showToast("Error saving token");
+              console.error("Error saving token:", error);
+            });
         } else {
           console.error("Registration failed:", data.error);
           showToast("Registration failed");
-          // Handle failed registration (optional)
+        
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        // Handle error (optional)
+      
       });
   };
 
@@ -84,6 +101,11 @@ const SignUpPage = () => {
       >
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
+      {loading && (
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator size="large" color="#007BFF" />
+        </View>
+      )}
     </View>
   );
 };
@@ -121,6 +143,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  activityIndicatorContainer: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    width: "100%",
+    height: "100%",
   },
 });
 
