@@ -1,4 +1,4 @@
-import {Tabs} from "expo-router";
+import { Tabs } from "expo-router";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const HomeLayout = () => {
@@ -19,6 +19,7 @@ const HomeLayout = () => {
             <Tabs.Screen name="[id]"
                 options={{
                     title: "Sub Category",
+                    
                     href: null,
                 }}
             />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,113 +7,87 @@ import {
   StyleSheet,
   ToastAndroid,
   ActivityIndicator,
-  Dimensions,
   Image,
 } from "react-native";
+import { Link, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FontAwesome } from "@expo/vector-icons";
-import { router } from "expo-router";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-const SignUpPage = () => {
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const windowWidth = Dimensions.get('window').width;
   const showToast = (message) => {
     ToastAndroid.show(message, ToastAndroid.SHORT);
   };
 
-  const handleSignUp = () => {
+  useEffect(() => {
+    checkifLoggedIn();
+  }, []);
+
+  const checkifLoggedIn = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+      router.push("/home");
+    }
+  };
+
+  const handleLogin = () => {
     setLoading(true);
-    fetch("https://railprep.devshots.io/api/v1/auth/register", {
+    fetch("https://railprep.devshots.io/api/v1/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: name,
         email: email,
         password: password,
-        username: username,
       }),
     })
       .then((response) => {
         setLoading(false);
+        if (!response.ok) {
+          console.log("HTTP error:", response);
+          showToast("Login failed");
+          throw new Error("Login failed");
+        }
         return response.json();
       })
       .then((data) => {
-        if (data.success) {
-          showToast("Registration successful");
+        console.log("Login response:", data);
+        if (data.success && data.token) {
+          console.log("Login successful");
+          showToast("Login successful");
           AsyncStorage.setItem("token", data.token)
             .then(() => {
-              setEmail("");
-              setPassword("");
-              setUsername("");
-              setName("");
-              router.push("/home");
+              console.log("Token saved in local storage", data.token);
             })
             .catch((error) => {
-              showToast("Error saving token");
               console.error("Error saving token:", error);
             });
+          router.push("/home");
         } else {
-          showToast("Registration failed");
+          console.log("Login failed", data);
+          showToast("Login failed");
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.log("Error:", error);
       });
   };
 
   return (
     <View style={styles.container}>
+      {/* <Text style={styles.welcomeText}>Welcome to RailPrep</Text> */}
       <Image
         source={require("../assets/logo.png")}
         style={styles.logo}
       />
-      <Text style={styles.title}>Let's Get You Started</Text>
       <View style={styles.inputContainer}>
-        <FontAwesome
-          name="user-circle"
-          size={24}
-          color="#183153"
-          style={styles.icon}
-        />
+        <Icon name="envelope" size={20} color="#777" style={styles.icon} />
         <TextInput
-          style={[styles.input, { width: windowWidth*0.68 }]}
-          placeholder="Full Name"
-          value={name}
-          onChangeText={(text) => setName(text)}
-          autoCapitalize="words"
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <FontAwesome
-          name="user"
-          size={24}
-          color="#183153"
-          style={styles.icon}
-        />
-        <TextInput
-          style={[styles.input, { width: windowWidth*0.7 }]}
-          placeholder="Username"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-          autoCapitalize="none"
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <FontAwesome
-          name="envelope"
-          size={24}
-          color="#183153"
-          style={styles.icon}
-        />
-        <TextInput
-          style={[styles.input, { width: windowWidth*0.68 }]}
+          style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
@@ -122,23 +96,25 @@ const SignUpPage = () => {
         />
       </View>
       <View style={styles.inputContainer}>
-        <FontAwesome
-          name="lock"
-          size={24}
-          color="#183153"
-          style={styles.icon}
-        />
+        <Icon name="lock" size={20} color="#777" style={styles.icon} />
         <TextInput
-          style={[styles.input, { width: windowWidth*0.7 }]}
+          style={styles.input}
           placeholder="Password"
           value={password}
           onChangeText={(text) => setPassword(text)}
           secureTextEntry
         />
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-        <Text style={styles.buttonText}>Sign Up</Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+        <Icon name="sign-in" size={20} color="white" />
       </TouchableOpacity>
+      <Text>
+        Don't have an account?
+      </Text>
+      <Link href="/signup" style={styles.signUpLink}>
+        Sign Up
+      </Link>
       {loading && (
         <View style={styles.activityIndicatorContainer}>
           <ActivityIndicator size="large" color="#007BFF" />
@@ -154,15 +130,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
+    paddingHorizontal: 20,
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   logo: {
     width: 200,
     height: 200,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 20,
   },
   inputContainer: {
@@ -176,35 +153,42 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
+    color: "#183153",
   },
   input: {
+    flex: 1,
     height: 50,
-    // borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
   },
   button: {
-    width: 300,
+    width: "100%",
     height: 50,
     backgroundColor: "#007BFF",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 8,
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
   },
+  signUpLink: {
+    fontSize: 20,
+    color: "#007BFF",
+    textDecorationLine: "underline",
+  },
   activityIndicatorContainer: {
     position: "absolute",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0)",
     width: "100%",
     height: "100%",
   },
 });
 
-export default SignUpPage;
+export default LoginPage;

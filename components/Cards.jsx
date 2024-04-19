@@ -1,15 +1,26 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { router } from 'expo-router'; 
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { router } from 'expo-router';
 
-const Card = ({data}) => {
-    const id = data._id;
+const Card = ({ data, redirect }) => {
+  const windowWidth = Dimensions.get('window').width;
+  const cardWidth = windowWidth * 0.9;
+  const id = data._id;
+
+  const handlePress = () => {
+    if (redirect) {
+      router.replace(`/home/${id}`);
+    }
+  };
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { width: cardWidth }]}>
       <Text style={styles.title}>{data.title}</Text>
-      <TouchableOpacity style={styles.readMoreButton} onPress={()=> router.replace(`/home/${id}`)}>
-        <Text style={styles.readMoreButtonText}>Read More</Text>
-      </TouchableOpacity>
+      {redirect && (
+        <TouchableOpacity style={styles.readMoreButton} onPress={handlePress}>
+          <Text style={styles.readMoreButtonText}>Learn More</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

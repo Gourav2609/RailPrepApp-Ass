@@ -7,6 +7,7 @@ const RootLayout = () => {
         name="index"
         options={{
           title: "Login",
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -18,9 +19,16 @@ const RootLayout = () => {
       <Stack.Screen
         name="home"
         options={{
-          title: "Home",
+          title: "RailPrep",
           headerShown: false,
         }}
+      />
+      <Stack.Screen
+       name="signin"
+        options={{
+          title: "Login In",
+          headerShown: false,
+        }} 
       />
       {/* <Stack.Screen
         name="home/[id]"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, RefreshControl, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, StyleSheet, RefreshControl, ActivityIndicator, TouchableOpacity , BackHandler , Alert } from "react-native";
 import Cards from "../../components/Cards";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -54,6 +54,23 @@ const Home = () => {
     console.log("Categories:", categories);
   }, [categories]);
 
+  const backAction = () => {
+    Alert.alert('Hold on!', 'Are you sure you exit RailPrep', [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {text: 'YES', onPress: () => BackHandler.exitApp()},
+    ]);
+    return true;
+  };
+
+  const backHandler = BackHandler.addEventListener(
+    'hardwareBackPress',
+    backAction,
+  );
+
   return (
     <View style={styles.container}>
       {loading ? (
@@ -71,7 +88,7 @@ const Home = () => {
         >
           <View style={styles.cardsContainer}>
             {categories.map((item) => (
-              <Cards key={item.id} data={item} />
+              <Cards key={item.id} data={item} redirect={true}/>
             ))}
           </View>
         </ScrollView>

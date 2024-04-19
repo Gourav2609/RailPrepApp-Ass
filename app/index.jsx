@@ -1,113 +1,62 @@
-import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
+  Image,
   StyleSheet,
-  ToastAndroid,
-  ActivityIndicator,
+  Animated,
+  SafeAreaView,
+  Button,
 } from "react-native";
-import { Link, useNavigate, router } from "expo-router";
+import React, { useEffect, useRef , useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
-const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+const LandingPage = () => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const showToast = (message) => {
-    ToastAndroid.show(message, ToastAndroid.SHORT);
+  const [animation , setAnimation] = useState(false);
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start(()=>{
+      setAnimation(true);
+    });
   };
 
   useEffect(() => {
-    checkifLoggedIn();
+    fadeIn();
   }, []);
+
+  useEffect(() => {
+    if(animation){
+      checkifLoggedIn();
+    }
+  }, [animation]);
 
   const checkifLoggedIn = async () => {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       router.push("/home");
+    } else {
+      router.push("/signin");
     }
-  };
-
-  const handleLogin = () => {
-    setLoading(true);
-    fetch("https://railprep.devshots.io/api/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    })
-      .then((response) => {
-        setLoading(false);
-        if (!response.ok) {
-          console.log("HTTP error:", response);
-          showToast("Login failed");
-          throw new Error("Login failed");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // setLoading(false);
-        console.log("Login response:", data);
-        if (data.success && data.token) {
-          console.log("Login successful");
-          showToast("Login successful");
-          // Save token in local storage
-          AsyncStorage.setItem("token", data.token)
-            .then(() => {
-              console.log("Token saved in local storage", data.token);
-            })
-            .catch((error) => {
-              console.error("Error saving token:", error);
-            });
-          router.push("/home");
-        } else {
-          console.log("Login failed", data);
-          showToast("Login failed");
-        }
-      })
-      .catch((error) => {
-        // setLoading(false);
-        console.log("Error:", error);
-       
-      });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <Link href="/signup" style={styles.signUpLink}>
-        Sign Up
-      </Link>
-      {loading && (
-        <View style={styles.activityIndicatorContainer}>
-          <ActivityIndicator size="large" color="#007BFF" />
-        </View>
-      )}
+      <Animated.View
+        style={[
+          styles.fadingContainer,
+          {
+            opacity: fadeAnim,
+          },
+        ]}
+      >
+        <Text style={styles.fadingText}>Welcome to RailPrep :{")"}</Text>
+      </Animated.View>
     </View>
   );
 };
@@ -115,51 +64,20 @@ const LoginPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  input: {
-    width: 300,
-    height: 50,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-  },
-  button: {
-    width: 300,
-    height: 50,
-    backgroundColor: "#007BFF",
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+  fadingContainer: {
+    padding: 20,
   },
-  signUpLink: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#007BFF",
-    textDecorationLine: "underline",
+  fadingText: {
+    fontSize: 28,
   },
-  activityIndicatorContainer: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", 
-    width: "100%",
-    height: "100%",
+  buttonRow: {
+    flexBasis: 100,
+    justifyContent: "space-evenly",
+    marginVertical: 16,
   },
 });
 
-export default LoginPage;
+export default LandingPage;

@@ -7,7 +7,7 @@ const LogoutScreen = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('token');
-      router.replace('/');
+      router.replace('/signin');
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -23,19 +23,6 @@ const LogoutScreen = () => {
       { text: "Yes", onPress: handleLogout }
     ]);
   };
-
-  // const handleBackPress = () => {
-  //   confirmLogout();
-  //   return true;
-  // };
-
-  // const registerBackHandler = () => {
-  //   BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-  // };
-
-  // const unregisterBackHandler = () => {
-  //   BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-  // };
 
   return (
     <View style={styles.container}>
