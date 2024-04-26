@@ -2,14 +2,14 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 
-const Card = ({ data, redirect }) => {
+const SubCards = ({ data, redirect }) => {
   const windowWidth = Dimensions.get('window').width;
   const cardWidth = windowWidth * 0.9;
   const id = data._id;
 
   const handlePress = () => {
     if (redirect) {
-      router.replace(`/home/${id}`);
+      router.push(`/home/subcategory/${id}`);
       // router.replace("/home/testing");
     }
   };
@@ -64,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Card;
+export default SubCards;

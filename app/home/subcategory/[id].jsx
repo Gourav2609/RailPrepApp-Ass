@@ -19,7 +19,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import * as FileSystem from "expo-file-system";
 import * as IntentLauncher from "expo-intent-launcher";
 import Pdf from "react-native-pdf";
-import SubCards from "../../components/SubCategory";
+import SubCards from "../../../components/SubCategory";
 
 let windowHeight = Dimensions.get("window").height;
 
@@ -115,9 +115,9 @@ const Subcategory = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.parentCategoryContainer}>
+      {/* <View style={styles.parentCategoryContainer}>
         <Text style={styles.parentCategoryText}>{parentCategory}</Text>
-      </View>
+      </View> */}
       {loading ? (
         <View style={styles.activityIndicatorContainer}>
           <ActivityIndicator size="large" color="#0000ff" />
@@ -169,21 +169,22 @@ const Subcategory = () => {
       )}
       {pdfSource && (
         <View style={styles.pdfContainer}>
-            <Pdf
-              trustAllCerts={false}
-              source={pdfSource}
-              onLoadComplete={(numberOfPages, filePath) => {
-                console.log(`number of pages: ${numberOfPages}`);
-              }}
-              style={styles.pdf}
-              onError={(error) => {
-                console.log(error);
-              }}
-            />
-
+          {/* <View style={styles.closeButtonContainer}> */}
           <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>Close PDF</Text>
           </TouchableOpacity>
+          {/* </View> */}
+          <Pdf
+            trustAllCerts={false}
+            source={pdfSource}
+            onLoadComplete={(numberOfPages, filePath) => {
+              console.log(`number of pages: ${numberOfPages}`);
+            }}
+            style={styles.pdf}
+            onError={(error) => {
+              console.log(error);
+            }}
+          />
         </View>
       )}
     </ScrollView>
@@ -194,12 +195,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9fafb",
-    // marginTop: 30,
+    minHeight: windowHeight,
+    // backgroundColor: "red",
   },
   scrollViewContent: {
     flexGrow: 1,
     paddingHorizontal: 10,
     paddingTop: 20,
+    // backgroundColor:"red",
+    minHeight: windowHeight,
+    height: "100%",
   },
   parentCategoryContainer: {
     padding: 20,
@@ -249,25 +254,34 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
   pdfContainer: {
-    flex: 1,
-    width: "100%",
     position: "absolute",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     minHeight: windowHeight,
     height: "100%",
+    backgroundColor: "f9fafb",
+    backfaceVisibility: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  pdfView: {
-    flex: 1,
+  closeButtonContainer: {
     width: "100%",
-    height: "100%",
+    // backgroundColor:"black",
   },
   closeButton: {
-    backgroundColor: "red",
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 100,
     padding: 10,
     borderRadius: 5,
-    position: "absolute",
-    top: 20,
-    right: 20,
+    width:Dimensions.get("window").width/5,
+    backgroundColor: "red",
+    // alignSelf: "flex-end",
+    // marginHorizontal: 10,
+    // marginTop: 10,
   },
   closeButtonText: {
     color: "white",
@@ -275,7 +289,8 @@ const styles = StyleSheet.create({
   pdf: {
     flex: 1,
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    minHeight: Dimensions.get("window").height,
+    // marginTop: 20,
   },
 });
 

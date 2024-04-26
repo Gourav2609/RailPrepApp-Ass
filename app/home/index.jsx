@@ -30,7 +30,7 @@ const Home = () => {
         setCategories(data.data);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.log("Error:", error);
       setError("An error occurred while fetching data. Please logout and try again.");
     } finally {
       setLoading(false);
