@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router ,Link } from "expo-router";
 
 const SignUpPage = () => {
   const [name, setName] = useState("");
@@ -138,7 +138,12 @@ const SignUpPage = () => {
       </View>
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
+      </TouchableOpacity><Text>
+        Already have an account?
+      </Text>
+      <Link href="/signin" style={styles.signUpLink}>
+        Log In
+      </Link>
       {loading && (
         <View style={styles.activityIndicatorContainer}>
           <ActivityIndicator size="large" color="#007BFF" />
@@ -205,6 +210,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  signUpLink: {
+    fontSize: 20,
+    color: "#007BFF",
+    textDecorationLine: "underline",
+  }
 });
 
 export default SignUpPage;

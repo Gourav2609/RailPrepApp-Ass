@@ -1,9 +1,16 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { router } from 'expo-router';
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import { router } from "expo-router";
+import { FontAwesome } from '@expo/vector-icons';
 
 const SubCards = ({ data, redirect }) => {
-  const windowWidth = Dimensions.get('window').width;
+  const windowWidth = Dimensions.get("window").width;
   const cardWidth = windowWidth * 0.9;
   const id = data._id;
 
@@ -19,7 +26,8 @@ const SubCards = ({ data, redirect }) => {
       <Text style={styles.title}>{data.title}</Text>
       {redirect && (
         <TouchableOpacity style={styles.readMoreButton} onPress={handlePress}>
-          <Text style={styles.readMoreButtonText}>Learn More</Text>
+          <Text style={styles.readMoreButtonText}>Learn more</Text>
+          <FontAwesome name="angle-right" size={20} color="#ffffff" />
         </TouchableOpacity>
       )}
     </View>
@@ -28,23 +36,26 @@ const SubCards = ({ data, redirect }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    padding: 16,
+    // backgroundColor: '#ecf2f9',
+    backgroundColor:"#fff",
+    borderRadius: 12,
+    padding: 4,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderWidth: 0.5,
+    borderColor: "#d6d7da",
   },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight:'500',
     marginBottom: 8,
+    //padding: 12,
+    textAlign: "center",
+    backgroundColor:"#ecf2f9",
+    borderRadius: 8,
+    paddingVertical:16,
+    paddingHorizontal:2,
+    borderWidth: 0.5,
+    borderColor: "#d6d7da",
   },
   content: {
     fontSize: 16,
@@ -52,15 +63,20 @@ const styles = StyleSheet.create({
   },
   readMoreButton: {
     backgroundColor: '#007BFF',
-    borderRadius: 8,
-    paddingVertical: 8,
+    borderRadius: 6,
+    paddingVertical: 4,
     paddingHorizontal: 12,
     alignItems: 'center',
+    // width:100,
+    display:"flex",
+    flexDirection:"row",
+    justifyContent:"center",
+    gap:8,
   },
   readMoreButtonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '400',
   },
 });
 

@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { FontAwesome } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
 import * as IntentLauncher from "expo-intent-launcher";
 import Pdf from "react-native-pdf";
@@ -33,6 +33,7 @@ const Subcategory = () => {
   const [error, setError] = useState(null);
   const [pdfSource, setPdfSource] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [pdfTitle, setPdfTitle] = useState("");
   const router = useRouter();
 
   const toggleModal = () => {
@@ -106,6 +107,7 @@ const Subcategory = () => {
 
   const handleDocumentDownload = async (url, title) => {
     setPdfSource({ uri: url, cache: true });
+    setPdfTitle(title);
   };
 
   // const PdfResource = {
@@ -114,6 +116,7 @@ const Subcategory = () => {
   // };
 
   return (
+    <>
     <ScrollView style={styles.container}>
       {/* <View style={styles.parentCategoryContainer}>
         <Text style={styles.parentCategoryText}>{parentCategory}</Text>
@@ -135,7 +138,7 @@ const Subcategory = () => {
         >
           <View style={styles.table}>
             {subcategory.length === 0 ? (
-              <Text>No subcategories available</Text>
+              <Text>No Data Available</Text>
             ) : (
               subcategory.map((item) => (
                 <SubCards key={item.id} data={item} redirect={true} />
@@ -146,7 +149,7 @@ const Subcategory = () => {
           <View style={styles.documentContainer}>
             <Text style={styles.documentTitle}>Documents</Text>
             {document.length === 0 ? (
-              <Text>No documents available</Text>
+              <Text>No Data Avaiable</Text>
             ) : (
               document.map((item) => (
                 <TouchableOpacity
@@ -154,11 +157,19 @@ const Subcategory = () => {
                   style={styles.documentButton}
                   onPress={() => handleDocumentDownload(item.s3Url, item.title)}
                 >
-                  <Text style={styles.documentButtonText}>{item.title}</Text>
-                  <Icon
-                    name="file-pdf-o"
+                  <View style={styles.titleContent}>
+                    <FontAwesome
+                      name="file-pdf-o"
+                      size={20}
+                      color="red"
+                      style={styles.downloadIcon}
+                    />
+                    <Text style={styles.documentButtonText}>{item.title}</Text>
+                  </View>
+                  <FontAwesome
+                    name="download"
                     size={20}
-                    color="#fff"
+                    color="#717171"
                     style={styles.downloadIcon}
                   />
                 </TouchableOpacity>
@@ -167,27 +178,31 @@ const Subcategory = () => {
           </View>
         </ScrollView>
       )}
-      {pdfSource && (
+    </ScrollView>
+    {pdfSource && (
         <View style={styles.pdfContainer}>
-          {/* <View style={styles.closeButtonContainer}> */}
-          <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>Close PDF</Text>
-          </TouchableOpacity>
-          {/* </View> */}
-          <Pdf
-            trustAllCerts={false}
-            source={pdfSource}
-            onLoadComplete={(numberOfPages, filePath) => {
-              console.log(`number of pages: ${numberOfPages}`);
-            }}
-            style={styles.pdf}
-            onError={(error) => {
-              console.log(error);
-            }}
-          />
+          <View style={styles.pdfHeader}>
+            <Text style={styles.pdfTitle}>{pdfTitle}.pdf</Text>
+            <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.pdfView}>
+            <Pdf
+              trustAllCerts={false}
+              source={pdfSource}
+              onLoadComplete={(numberOfPages, filePath) => {
+                console.log(`number of pages: ${numberOfPages}`);
+              }}
+              style={styles.pdf}
+              onError={(error) => {
+                console.log(error);
+              }}
+            />
+          </View>
         </View>
       )}
-    </ScrollView>
+    </>
   );
 };
 
@@ -195,16 +210,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9fafb",
-    minHeight: windowHeight,
-    // backgroundColor: "red",
+    // minHeight: windowHeight,
+    // marginTop: 30,
   },
   scrollViewContent: {
-    flexGrow: 1,
-    paddingHorizontal: 10,
+    flex: 1,
     paddingTop: 20,
-    // backgroundColor:"red",
-    minHeight: windowHeight,
-    height: "100%",
+    paddingBottom: 20,
+    display: "flex",
+    // justifyContent: "center",
+    alignItems: "center",
+    // backgroundColor: "black",
+    // minHeight: windowHeight,
+    // height:"100%",
   },
   parentCategoryContainer: {
     padding: 20,
@@ -229,29 +247,40 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   documentContainer: {
+    width: "90%",
     marginTop: 20,
+    display: "flex",
+    alignContent: "flex-start",
+    // backgroundColor:"black",
+    // flexDirection: "row",
   },
   documentTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 24,
+    fontWeight: "500",
     marginBottom: 10,
   },
   documentButton: {
+    display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#007BFF",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+    gap: 10,
   },
   documentButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: "#000",
+    fontSize: 18,
+    fontWeight: "400",
     marginRight: 10,
   },
-  downloadIcon: {
-    marginLeft: "auto",
+  downloadIcon: {},
+  titleContent: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   pdfContainer: {
     position: "absolute",
@@ -259,38 +288,41 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    minHeight: windowHeight,
-    height: "100%",
-    backgroundColor: "f9fafb",
-    backfaceVisibility: "hidden",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
+    padding: 5,
   },
-  closeButtonContainer: {
+  pdfHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     width: "100%",
-    // backgroundColor:"black",
+    padding: 10,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  pdfTitle: {
+    fontSize: 20,
+    fontWeight: "400",
   },
   closeButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 100,
+    backgroundColor: "red",
     padding: 10,
     borderRadius: 5,
-    width:Dimensions.get("window").width/5,
-    backgroundColor: "red",
-    // alignSelf: "flex-end",
-    // marginHorizontal: 10,
-    // marginTop: 10,
   },
   closeButtonText: {
     color: "white",
   },
+  pdfView: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   pdf: {
     flex: 1,
-    width: Dimensions.get("window").width,
-    minHeight: Dimensions.get("window").height,
-    // marginTop: 20,
+    width: "100%",
   },
 });
 

@@ -11,7 +11,6 @@ const RootLayout = () => {
                 options={({ route }) => ({
                     title: (route && route.params && route.params.name) || "Sub Category",
                     headerShown: true,
-                    // href: null,
                   })}
             />
         </Stack>

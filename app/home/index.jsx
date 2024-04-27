@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, RefreshControl, ActivityIndicator, TouchableOpacity , BackHandler , Alert } from "react-native";
+import { View, Text, ScrollView, StyleSheet, RefreshControl, ActivityIndicator, BackHandler, Alert } from "react-native";
 import Cards from "../../components/Cards";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
@@ -55,7 +56,7 @@ const Home = () => {
   }, [categories]);
 
   const backAction = () => {
-    Alert.alert('Hold on!', 'Are you sure you exit RailPrep', [
+    Alert.alert('Hold on!', 'Are you sure you want to exit RailPrep', [
       {
         text: 'Cancel',
         onPress: () => null,
@@ -66,9 +67,14 @@ const Home = () => {
     return true;
   };
 
-  const backHandler = BackHandler.addEventListener(
-    'hardwareBackPress',
-    backAction,
+  useFocusEffect(
+    React.useCallback(() => {
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+        backAction();
+        return true;
+      });
+      return () => backHandler.remove();
+    }, [])
   );
 
   return (
