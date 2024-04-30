@@ -1,5 +1,5 @@
 import { Tabs , useRouter} from "expo-router";
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { FontAwesome } from "@expo/vector-icons";
 
 const HomeLayout = () => {
 

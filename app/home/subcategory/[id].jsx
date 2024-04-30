@@ -7,21 +7,12 @@ import {
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
-  Linking,
-  Alert,
-  Dimensions,
-  Modal,
-  Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system";
-import * as IntentLauncher from "expo-intent-launcher";
 import Pdf from "react-native-pdf";
 import SubCards from "../../../components/SubCategory";
-
-let windowHeight = Dimensions.get("window").height;
 
 const Subcategory = () => {
   const { id } = useLocalSearchParams();

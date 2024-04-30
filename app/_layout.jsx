@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import 'expo-dev-client';
+// import 'expo-dev-client';
 
 const RootLayout = () => {
   return (
